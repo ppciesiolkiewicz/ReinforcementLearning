@@ -3,49 +3,49 @@ from actions import Actions
 
 
 class World():
-    def __init__(self, N, M, r, specials, p1, p2):
+    def __init__(self, N, M, r, specials, p1, p2, possibleActions):
         self.buildMap(N, M, r, specials)
-
         self.p1 = p1
         self.p2 = p2
 
-        self.actions = Actions()
+        self.actions = Actions(possibleActions)
 
     def buildMap(self, N, M, r, specials):
-        self.map = [[r for x in range(N)] for y in range(M)]  # [y][x]
+        self.rewards = [[r for x in range(N)] for y in range(M)]  # [y][x]
         self.terminals = []
 
         for s in specials:
-            self.map[s[1]][s[0]] = specials[s][1]
+            self.rewards[s[1]][s[0]] = specials[s][1]
             if specials[s][0] == "F":
-                self.map[s[1]][s[0]] = None
+                self.rewards[s[1]][s[0]] = None
             elif specials[s][0] == "G":
                 self.terminals.append(s)
+            elif specials[s][0] == "S":
+                self.start = s
 
 
 
     def getY(self):
-        return len(self.map)
+        return len(self.rewards)
 
     def getX(self):
-        return len(self.map[0])
+        return len(self.rewards[0])
 
     # state : tuple(x,y)
     def getReward(self, state):
-        return self.map[state[1]][state[0]]
+        return self.rewards[state[1]][state[0]]
 
     def getActions(self, state):
         return self.actions.getActions() if state not in self.terminals else [self.actions.terminalAction]
 
     def bellmanOperator(self, state, action):
         if self.actions.isTerminalAction(action):
-            return [(0, state)]  #state is reahable for sure
+            return [(0, state)]  #state is reachable for sure
         else:
-            left, right = self.actions.getLeftRightActions(action)
+            possibleAct = self.actions.getOtherPossibleActionsActions(action)
+            probState = [(self.p2, self.getNewState(state, pa)) for pa in possibleAct] + [(self.p1, self.getNewState(state, action))]
             return [s for s in
-                    [(self.p1, self.getNewState(state, action)),
-                     (self.p2, self.getNewState(state, left)),
-                     (self.p2, self.getNewState(state, right))]
+                    probState
                     if self.isStateReachable(s[1])]
 
     def getNewState(self, state, action):
@@ -56,6 +56,6 @@ class World():
         return state
 
     def isStateReachable(self, state):
-        return True if self.map[state[1]][state[0]] is not None else False
+        return True if self.rewards[state[1]][state[0]] is not None else False
 
 

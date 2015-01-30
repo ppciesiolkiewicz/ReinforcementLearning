@@ -20,7 +20,13 @@ class Mdp():
         r = ast.literal_eval(cnf['r'])
         N = ast.literal_eval(cnf['n'])
         M = ast.literal_eval(cnf['m'])
-        self.world = World(N, M, r, specials, p1, p2)
+        possibleActions = None
+        try:
+            possibleActions = ast.literal_eval(cnf['possible_actions'])
+        except:
+            pass
+
+        self.world = World(N, M, r, specials, p1, p2, possibleActions)
 
     def init(self):
         u = []
@@ -62,6 +68,7 @@ class Mdp():
             t += 1
         self.prettyPrint2dList(self.toMatrix(u[-1]))
         self.prettyPrint2dList(self.toMatrix(pi[-1]))
+        print("finished after {0} iterations".format(t))
 
         return u, pi
 

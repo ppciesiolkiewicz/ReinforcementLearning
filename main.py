@@ -7,7 +7,6 @@ from mdp import Mdp
 def main(argv):
     mdp = Mdp(argv[1], argv[2])
     u, pi = mdp.valueIterationSolve()
-    pprint(u[-1])
     gp = Gnuplot.Gnuplot(debug=1)
     gp('set style data linespoints')
 
