@@ -3,10 +3,10 @@
 __start__: lecture
 
 lecture:
-	python main.py settings.ini lecture
+	python src/main.py settings.ini lecture
 
 site:
-	python main.py settings.ini site
+	python src/main.py settings.ini site
 
 clean:
 	find . -name *.pyc | xargs rm -rf
