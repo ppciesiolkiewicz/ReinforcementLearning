@@ -14,10 +14,13 @@ class Mdp():
         self.epsilon = ast.literal_eval(cnf['epsilon'])
         self.discountFactor = ast.literal_eval(cnf['discount_factor'])
 
-        map = ast.literal_eval(cnf['map'])
-        probability = ast.literal_eval(cnf['probability'])
-        terminals = ast.literal_eval(cnf['terminals'])
-        self.world = World(map, terminals, probability)
+        p1 = ast.literal_eval(cnf['probability1'])
+        p2 = ast.literal_eval(cnf['probability2'])
+        specials = ast.literal_eval(cnf['special_fields'])
+        r = ast.literal_eval(cnf['r'])
+        N = ast.literal_eval(cnf['n'])
+        M = ast.literal_eval(cnf['m'])
+        self.world = World(N, M, r, specials, p1, p2)
 
     def init(self):
         u = []
