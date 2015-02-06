@@ -1,11 +1,7 @@
-from world import World
-import configparser
-import ast
 
-from pprint import pprint
+class Qlearn():
 
 
-class Mdp():
     def __init__(self, configfile, section):
         config = configparser.ConfigParser()
         config.read(configfile)
@@ -28,12 +24,30 @@ class Mdp():
 
         self.world = World(N, M, r, specials, p1, p2, possibleActions)
 
+
     def init(self):
         u = []
         pi = []
         u.append({(x, y): 0 for x in range(self.world.getX()) for y in range(self.world.getY())})
         pi.append({(x, y): "" for x in range(self.world.getX()) for y in range(self.world.getY())})
         return u, pi, 1
+
+    def choose_action(self, state):
+        if random.random() < self.epsilon: # exploration
+            action = random.choice(self.actions)
+        else:
+            q = [self.getQ(state, a) for a in self.actions]
+            maxQ = max(q)
+            count = q.count(maxQ)
+            if count > 1:
+                best = [i for i in range(len(self.actions)) if q[i] == maxQ]
+                i = random.choice(best)
+            else:
+                i = q.index(maxQ)
+
+           action = self.actions[i]
+        return action
+
 
     def solve(self):
         u, pi, t = self.init()
@@ -54,17 +68,6 @@ class Mdp():
                     if not w.isStateReachable(state):
                         continue
 
-                    v = {}
-                    for action in w.getActions(state):
-                        v[action['sym']] = 0
-                        for p, sNew in w.bellmanOperator(state, action):
-                            v[action['sym']] += p * u[t - 1][sNew]
-
-                    maxAct = max(v, key=lambda k: v[k])
-                    pi[t][(x, y)] = maxAct
-
-                    u[t][state] = w.getReward(state) + d * v[maxAct]
-                    diff += abs(u[t][state] - u[t - 1][state])
 
             if diff < e:
                 break
