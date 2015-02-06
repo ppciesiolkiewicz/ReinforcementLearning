@@ -41,6 +41,9 @@ class Mdp():
         d = self.discountFactor
         e = self.epsilon
 
+        print("Loaded world:")
+        self.prettyPrintMap(self.world.rewards[::-1])
+
         while True:
             diff = 0
             u.append({})
@@ -66,13 +69,17 @@ class Mdp():
             if diff < e:
                 break
             t += 1
-        self.prettyPrint2dList(self.toMatrix(u[-1]))
-        self.prettyPrint2dList(self.toMatrix(pi[-1]))
-        print("finished after {0} iterations".format(t))
+
+        print("\nfinished after {0} iterations".format(t))
+        print("\nU values: ")
+        self.prettyPrintMap(self.toMatrix(u[-1]))
+        print("\n Policy: ")
+        self.prettyPrintMap(self.toMatrix(pi[-1]))
+
 
         return u, pi
 
-    def prettyPrint2dList(self, matrix):
+    def prettyPrintMap(self, matrix):
         s = [[str(e) for e in row] for row in matrix]
         lens = [max(map(len, col)) for col in zip(*s)]
         fmt = '\t'.join('{{:{}}}'.format(x) for x in lens)
